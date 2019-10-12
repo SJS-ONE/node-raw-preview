@@ -3,7 +3,7 @@
   "author": "SJS-ONE",
   "version": "1.0.1",
   "description": "## require - pkg-config - exiv2",
-  "main": "./build/Release/native.node",
+  "main": "binding.js",
   "scripts": {
     "test": "npm run install && node test",
     "install": "node-gyp rebuild"
