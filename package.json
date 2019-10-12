@@ -1,18 +1,30 @@
 {
-  "name": "node-raw-preview",
+  "name": "raw-preview",
   "author": "SJS-ONE",
   "version": "1.0.0",
-  "description": "",
+  "description": "## require - pkg-config - exiv2",
   "main": "./build/Release/native.node",
   "scripts": {
     "test": "npm run install && node test",
     "install": "node-gyp rebuild"
   },
-  "private": true,
   "license": "ISC",
   "gypfile": true,
   "dependencies": {
     "node-addon-api": "^1.7.1",
     "node-gyp": "^6.0.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SJS-ONE/node-raw-preview.git"
+  },
+  "keywords": [
+    "raw",
+    "preview"
+  ],
+  "bugs": {
+    "url": "https://github.com/SJS-ONE/node-raw-preview/issues"
+  },
+  "homepage": "https://github.com/SJS-ONE/node-raw-preview#readme"
 }
