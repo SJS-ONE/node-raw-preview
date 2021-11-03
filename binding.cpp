@@ -23,33 +23,36 @@ Exiv2::PreviewProperties getBiggestPreview(Exiv2::PreviewPropertiesList list)
     return list[curMaxKey];
 }
 
-napi_value getExifDataFromImage(Napi::Env env, Exiv2::Image::AutoPtr image){
-    
+napi_value getExifDataFromImage(Napi::Env env, Exiv2::Image::AutoPtr image)
+{
+
     Exiv2::ExifData &exifData = image->exifData();
 
     napi_value exifDataObject = Napi::Object::New(env);
-
     napi_value unknownMetaDataArray = Napi::Array::New(env);
 
     Exiv2::ExifData::const_iterator end = exifData.end();
-    for (Exiv2::ExifData::const_iterator i = exifData.begin(); i != end; ++i) {
-        const char* tn = i->typeName();
+    for (Exiv2::ExifData::const_iterator i = exifData.begin(); i != end; ++i)
+    {
+        const char *tn = i->typeName();
 
-        if(!tn){
+        if (!tn)
+        {
             continue;
         }
 
         std::string searchString = "Exif.Sony2.0x";
-        if ( (i->key()).find(searchString) != std::string::npos) {
+        if ((i->key()).find(searchString) != std::string::npos)
+        {
             continue;
         }
 
-        if(i->count()){
+        if (i->count())
+        {
             auto key = Napi::String::New(env, i->key());
             auto value = Napi::String::New(env, i->getValue()->toString());
             napi_set_property(env, exifDataObject, key, value);
         }
-        
     }
     return exifDataObject;
 }
@@ -72,10 +75,10 @@ napi_value getPreviewForPath(Napi::Env env, std::string path)
     napi_set_property(env, previewImageObject, Napi::String::New(env, "width"), Napi::String::New(env, std::to_string(preview.width())));
     napi_set_property(env, previewImageObject, Napi::String::New(env, "height"), Napi::String::New(env, std::to_string(preview.height())));
     napi_set_property(env, previewImageObject, Napi::String::New(env, "mime"), Napi::String::New(env, preview.mimeType()));
-    napi_set_property(env, previewImageObject, Napi::String::New(env, "base64"), Napi::String::New(env, base64_encode(preview.pData(), preview.size()) ));
+    napi_set_property(env, previewImageObject, Napi::String::New(env, "base64"), Napi::String::New(env, base64_encode(preview.pData(), preview.size())));
 
     napi_value exifDataObject = getExifDataFromImage(env, image);
-    
+
     napi_value previewObject = Napi::Object::New(env);
     napi_set_property(env, previewObject, Napi::String::New(env, "image"), previewImageObject);
     napi_set_property(env, previewObject, Napi::String::New(env, "exifData"), exifDataObject);
@@ -87,14 +90,11 @@ Napi::Promise NodeRawPreview::getPreviewAndMetadata(const Napi::CallbackInfo &in
 {
     Napi::Env env = info.Env();
 
-    auto deferred = Napi::Promise::Deferred::New(env);
-
     Napi::String first = info[0].As<Napi::String>();
-
     napi_value returnValue = getPreviewForPath(env, first.Utf8Value());
 
+    auto deferred = Napi::Promise::Deferred::New(env);
     deferred.Resolve(returnValue);
-
     return deferred.Promise();
 }
 
