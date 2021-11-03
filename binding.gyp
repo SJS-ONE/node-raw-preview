@@ -3,7 +3,7 @@
         {
             "target_name": "native",
             "sources": [
-                "binding.cpp",
+                "src/binding.cpp",
                 "base64/base64.cpp"
             ],
             "include_dirs": [
