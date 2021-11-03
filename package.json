@@ -1,7 +1,7 @@
 {
   "name": "raw-preview",
   "author": "SJS-ONE",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "## require - pkg-config - exiv2",
   "main": "binding.js",
   "types": "binding.d.ts",
