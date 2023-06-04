@@ -13,8 +13,8 @@
             "dependencies": [
                 "<!(node -p \"require('node-addon-api').gyp\")",
             ],
-            "cflags!": ["-fno-exceptions"],
-            "cflags_cc!": ["-fno-exceptions"],
+            "cflags!": ["-fno-exceptions", "-Wno-deprecated-declarations"],
+            "cflags_cc!": ["-fno-exceptions", "-Wno-deprecated-declarations"],
             'libraries': [
                 '<!@(pkg-config --libs-only-l exiv2 libssh)',
                 '<!@(pkg-config --libs-only-L --libs-only-other exiv2 libssh)'

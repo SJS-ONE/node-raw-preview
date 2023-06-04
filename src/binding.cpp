@@ -1,11 +1,11 @@
 #include "binding.h"
 
-Napi::Object getExifDataFromImage(Napi::Env env, Exiv2::Image::AutoPtr image, bool ignoreMetadataWithoutName)
+Napi::Object getExifDataFromImage(Napi::Env env, Exiv2::Image::UniquePtr image, bool ignoreMetadataWithoutName)
 {
     Exiv2::ExifData &exifData = image->exifData();
 
     Napi::Object exifDataObject = Napi::Object::New(env);
-    Napi::Array unknownMetaDataArray = Napi::Array::New(env);
+    // Napi::Array unknownMetaDataArray = Napi::Array::New(env);
 
     Exiv2::ExifData::const_iterator end = exifData.end();
     for (Exiv2::ExifData::const_iterator i = exifData.begin(); i != end; ++i)
@@ -57,7 +57,7 @@ Napi::Object getExifDataFromImage(Napi::Env env, Exiv2::Image::AutoPtr image, bo
 
 napi_value getPreviewForPath(Napi::Env env, std::string path, Napi::Object options)
 {
-    Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(path);
+    Exiv2::Image::UniquePtr image = Exiv2::ImageFactory::open(path);
     image->readMetadata();
 
     Exiv2::PreviewManager loader(*image);
@@ -78,7 +78,7 @@ napi_value getPreviewForPath(Napi::Env env, std::string path, Napi::Object optio
 
     Napi::Object previewObject = Napi::Object::New(env);
     previewObject.Set("image", previewImageObject);
-    previewObject.Set("exifData", getExifDataFromImage(env, image, options.Get("ignoreMetadataWithoutName").As<Napi::Boolean>().Value()));
+    previewObject.Set("exifData", getExifDataFromImage(env, std::move(image), options.Get("ignoreMetadataWithoutName").As<Napi::Boolean>().Value()));
 
     return previewObject;
 }
@@ -115,7 +115,8 @@ Napi::Promise NodeRawPreview::getPreviewAndMetadata(const Napi::CallbackInfo &in
 
 Napi::Object NodeRawPreview::Init(Napi::Env env, Napi::Object exports)
 {
-    exports.Set("getPreviewAndMetadata", Napi::Function::New(env, NodeRawPreview::getPreviewAndMetadata));
+    exports.Set("getPreviewAndMetadata", Napi::Function::New(env, NodeRawPreview::getPreviewAndMetadata));    
+    exports.Set("getExifData", Napi::Function::New(env, NodeRawPreview::getPreviewAndMetadata));    
 
     return exports;
 }
@@ -125,4 +126,4 @@ Napi::Object InitAll(Napi::Env env, Napi::Object exports)
     return NodeRawPreview::Init(env, exports);
 }
 
-NODE_API_MODULE(testaddon, InitAll)
+NODE_API_MODULE(raw_preview_addon, InitAll)
