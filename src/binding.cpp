@@ -106,17 +106,26 @@ Napi::Promise NodeRawPreview::getPreviewAndMetadata(const Napi::CallbackInfo &in
     Napi::String filePath = info[0].As<Napi::String>();
     Napi::Object options = getOptions(env, info[1]);
 
-    napi_value returnValue = getPreviewForPath(env, filePath.Utf8Value(), options);
-
     auto deferred = Napi::Promise::Deferred::New(env);
-    deferred.Resolve(returnValue);
+
+    try
+    {
+        napi_value returnValue = getPreviewForPath(env, filePath.Utf8Value(), options);
+        deferred.Resolve(returnValue);
+    }
+    catch (const Exiv2::Error &exiv2Error)
+    {
+        auto napiError = Napi::Error::New(env, exiv2Error.what());
+        deferred.Reject(napiError.Value());
+    }
+
     return deferred.Promise();
 }
 
 Napi::Object NodeRawPreview::Init(Napi::Env env, Napi::Object exports)
 {
-    exports.Set("getPreviewAndMetadata", Napi::Function::New(env, NodeRawPreview::getPreviewAndMetadata));    
-    exports.Set("getExifData", Napi::Function::New(env, NodeRawPreview::getPreviewAndMetadata));    
+    exports.Set("getPreviewAndMetadata", Napi::Function::New(env, NodeRawPreview::getPreviewAndMetadata));
+    // exports.Set("getExifData", Napi::Function::New(env, NodeRawPreview::getPreviewAndMetadata));
 
     return exports;
 }

@@ -13,8 +13,8 @@
             "dependencies": [
                 "<!(node -p \"require('node-addon-api').gyp\")",
             ],
-            "cflags!": ["-fno-exceptions", "-Wno-deprecated-declarations"],
-            "cflags_cc!": ["-fno-exceptions", "-Wno-deprecated-declarations"],
+            "cflags!": ["-fno-exceptions", '-fno-rtti', "-Wno-deprecated-declarations"],
+            "cflags_cc!": ["-fno-exceptions", '-fno-rtti', "-Wno-deprecated-declarations"],
             'libraries': [
                 '<!@(pkg-config --libs-only-l exiv2 libssh)',
                 '<!@(pkg-config --libs-only-L --libs-only-other exiv2 libssh)'
@@ -23,7 +23,8 @@
             'conditions': [
                 ['OS=="mac"', {
                 'xcode_settings': {
-                    'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
+                    'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+                    'GCC_ENABLE_CPP_RTTI': 'YES'
                 }
                 }]
             ]
